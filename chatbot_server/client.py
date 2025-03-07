@@ -60,8 +60,8 @@ class Client:
         pkt.read_packet(buffer.read(size))
         self.__handle_incoming_packet(pkt)
         
-    def __handle_incoming_packet(self, pkt : packet.Packet):
-        match id:
+    def __handle_incoming_packet(self, pkt):
+        match pkt.id:
             case PacketId.PING: 
                 send = packet.PongPacket()
                 send.write_packet(pkt.ping) # do it properly later
@@ -80,10 +80,55 @@ class Client:
                 pass
 
             case PacketId.SEND_MESSAGE:
-                send = packet.RecieveMessagePacket()
-                send.write_packet(self.username, pkt.message)
-                self.server.get_client(pkt.target).send_packet(send)
+                self.__handle_recv_input(pkt.message)
                 pass
+
+    def __handle_recv_input(self, message : str):
+
+        if not message:
+            self.__send_recv_packet("Please provide a proper input...")
+            return
+
+        messages = message.split()
+        
+        command = messages[0]
+
+        match command.lower():
+            case "help":
+                self.__send_recv_packet("""
+                <help>
+                <hello>
+                <math> <a...z>
+                """)
+                pass
+            case "hello":
+                self.__send_recv_packet(f"Hi, {self.username}")
+                pass
+            case "math":
+                variables = messages[1:]
+
+                total = 0
+
+                for variable in variables:
+                    
+                    print(variable)
+
+                    number = 0
+                    try:
+                        number = float(variable)
+                    except:
+                        pass
+                
+                    total += number
+
+                self.__send_recv_packet(f"Your number is {total}...")
+
+    def __send_recv_packet(self, msg : str):
+        to_send = packet.RecieveMessagePacket()
+        to_send.write_packet(msg)
+
+        self.send_packet(to_send)
+
 
     def disconnect(self):
         self.send_packet(packet.DisconnectPacket())

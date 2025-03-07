@@ -86,36 +86,27 @@ class RecieveMessagePacket(Packet):
     def __init__(self):
         super().__init__(PacketId.RECIEVE_MESSAGE, PacketType.SERVER)
 
-        self.sender = ""
         self.message = ""
 
     def read_packet(self, data):
         super().read_packet(data)
 
-        self.sender = self._Packet__read_string()
         self.message = self._Packet__read_string()
 
-    def write_packet(self, sender, message):
-        self._Packet__write_string(sender)
+    def write_packet(self, message):
         self._Packet__write_string(message)
         
 class SendMessagePacket(Packet):
-
     def __init__(self):
         super().__init__(PacketId.SEND_MESSAGE, PacketType.CLIENT)
-
-        self.sender = ""
-        self.target = ""
         self.message = ""
 
     def read_packet(self, data):
         super().read_packet(data)
-        
-        self.target = self._Packet__read_string()
         self.message = self._Packet__read_string()
 
-    def write_packet(self, target : str, message : str):
-        self._Packet__write_string(target)
+    def write_packet(self, message : str):
+        self.message = message
         self._Packet__write_string(message)
 
 class ConnectPacket(Packet): 

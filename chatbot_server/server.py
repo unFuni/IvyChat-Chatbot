@@ -29,27 +29,21 @@ class Server:
     def __handle_client(self, cli : client.Client):
 
         send = packet.HelloPacket()
-        send.write_packet(self.__get_users_list())
+        send.write_packet("") # Can send some sort of like message history and what not here if we want
 
         cli.send_packet(send)
 
         while(cli.connected):
             cli.handle()
 
-    def __get_users_list(self):
-        names = []
-        for client in self.clients.values():
-            names.append(client.username)
-        return names
-
     def add_client(self, cli : client.Client):
-        self.clients[cli.username] = cli
+        self.clients[cli.address] = cli
 
         print(f"USER: {cli.username} has connected...")
 
-    def get_client(self, username : str) -> client.Client:
-        if username in self.clients:
-            return self.clients[username]
+    def get_client(self, address : str) -> client.Client:
+        if address in self.clients:
+            return self.clients[address]
         return None
 
     def close(self):

@@ -4,8 +4,6 @@ import sys
 sys.path.append('../') # Temporary, once in prodution, build each server / client directory with copy of messagings folder
 
 import time
-
-import messaging
 import server
 
 MAX_CONN = 64
